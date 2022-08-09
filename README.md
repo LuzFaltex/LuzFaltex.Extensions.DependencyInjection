@@ -23,7 +23,7 @@ Specifically, the design of this application is as follows:
 
 As a practical use case of where this is used, see [Remora.Plugins](https://github.com/Nihlus/Remora.Plugins/issues/4).
 * Public service registrations (default) are available to any plugin in the plugin tree. This is how many application-level services are registered, especially when provided for consumption by plugins.
-* Protected service registrations are defined by a parent-child relationship. Child plugins are able to access parent, grandparent, or any ancestor protected service registrations.
+* Protected service registrations are defined by a parent-child relationship. Protected service registrations are accessible by any children.
 * Private service registrations are only available to types that live in the same `OwnerNamespace`.
 
 ## Integration
