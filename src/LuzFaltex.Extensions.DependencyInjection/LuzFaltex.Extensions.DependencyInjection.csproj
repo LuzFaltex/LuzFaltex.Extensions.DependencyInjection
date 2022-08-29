@@ -1,0 +1,112 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Add net7.0? -->
+    <TargetFrameworks>netstandard2.1;net6.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>preview</LangVersion>
+    <PackageDescription>Default implementation of having an mutable service provider for dependency injection.</PackageDescription>
+    <PackageOutputPath>$(MSBuildThisFileDirectory)../../nuget</PackageOutputPath>
+    <!--
+        Most of the source code was copied from the release/7.0 branch in dotnet/runtime.
+        However .NET 7 is not released yet as stable so version this as 6.0.0 until then
+        (a new release would need to be published anyway when the MS.E.DI dependency to this gets updated).
+    -->
+    <Version>6.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- For now depend on 6.0.0 until 7.0.0 is released as stable. -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+  </ItemGroup>
+
+  <!-- Source files from dotnet/runtime. -->
+  <ItemGroup>
+    <!-- common files in dotnet/runtime. -->
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Common/src/Extensions/TypeNameHelper/TypeNameHelper.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.Internal/TypeNameHelper.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Common/src/Extensions/ParameterDefaultValue/ParameterDefaultValue.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.Internal/ParameterDefaultValue.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Common/src/Extensions/ParameterDefaultValue/ParameterDefaultValue.netcoreapp.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.Internal/ParameterDefaultValue.netcoreapp.cs"
+      Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp'" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Common/src/Extensions/ParameterDefaultValue/ParameterDefaultValue.netstandard.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.Internal/ParameterDefaultValue.netstandard.cs"
+      Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
+    <!-- Non-common files in dotnet/runtime. -->
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/System.Private.CoreLib/src/System/Diagnostics/CodeAnalysis/DynamicallyAccessedMembersAttribute.cs"
+      Link="dotnet-runtime/System.Diagnostics.CodeAnalysis/DynamicallyAccessedMembersAttribute.cs"
+      Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/System.Private.CoreLib/src/System/Diagnostics/CodeAnalysis/DynamicallyAccessedMemberTypes.cs"
+      Link="dotnet-runtime/System.Diagnostics.CodeAnalysis/DynamicallyAccessedMemberTypes.cs"
+      Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'"/>
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/System.Private.CoreLib/src/System/Diagnostics/CodeAnalysis/UnconditionalSuppressMessageAttribute.cs"
+      Link="dotnet-runtime/System.Diagnostics.CodeAnalysis/UnconditionalSuppressMessageAttribute.cs"
+      Condition="'$(TargetFrameworkIdentifier)' != '.NETCoreApp'" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/System.Private.CoreLib/src/System/Diagnostics/CodeAnalysis/RequiresDynamicCodeAttribute.cs"
+      Link="dotnet-runtime/System.Diagnostics.CodeAnalysis/RequiresDynamicCodeAttribute.cs"
+      Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))" />
+    <!-- Microsoft.Extensions.DependencyInjection files in dotnet/runtime. -->
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/CallSiteJsonFormatter.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection/CallSiteJsonFormatter.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/CallSiteChain.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/CallSiteChain.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/CallSiteKind.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/CallSiteKind.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/CallSiteResultCacheLocation.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/CallSiteResultCacheLocation.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/CallSiteValidator.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/CallSiteValidator.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/CallSiteVisitor.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/CallSiteVisitor.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/ConstantCallSite.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/ConstantCallSite.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/ConstructorCallSite.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/ConstructorCallSite.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/FactoryCallSite.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/FactoryCallSite.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/ResultCache.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/ResultCache.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/ServiceCacheKey.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/ServiceCacheKey.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/ServiceCallSite.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/ServiceCallSite.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/ServiceLookupHelpers.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/ServiceLookupHelpers.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/ServiceProviderEngine.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/ServiceProviderEngine.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/StackGuard.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/StackGuard.cs" />
+    <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/ServiceLookup/ThrowHelper.cs"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection.ServiceLookup/ThrowHelper.cs" />
+    <EmbeddedResource
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Microsoft.Extensions.DependencyInjection/src/Resources/Strings.resx"
+      Link="dotnet-runtime/Microsoft.Extensions.DependencyInjection/Strings.resx" />
+  </ItemGroup>
+
+</Project>
