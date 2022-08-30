@@ -25,6 +25,9 @@
   <ItemGroup>
     <!-- common files in dotnet/runtime. -->
     <Compile
+      Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Common/src/System/SR.cs"
+      Link="dotnet-runtime/System/SR.cs" />
+    <Compile
       Include="$(MSBuildThisFileDirectory)../../runtime/src/libraries/Common/src/Extensions/TypeNameHelper/TypeNameHelper.cs"
       Link="dotnet-runtime/Microsoft.Extensions.Internal/TypeNameHelper.cs" />
     <Compile
