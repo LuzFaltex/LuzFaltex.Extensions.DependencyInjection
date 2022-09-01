@@ -55,6 +55,7 @@ public class MutableServiceProvider : IServiceProvider, IDisposable, IAsyncDispo
         CallSiteFactory.Add(typeof(IServiceProvider), new ServiceProviderCallSite());
         CallSiteFactory.Add(typeof(IServiceScopeFactory), new ConstantCallSite(typeof(IServiceScopeFactory), Root));
         CallSiteFactory.Add(typeof(IServiceProviderIsService), new ConstantCallSite(typeof(IServiceProviderIsService), CallSiteFactory));
+        Default = this;
     }
 
     [RequiresDynamicCode(RequiresDynamicCodeMessage)]
@@ -68,6 +69,11 @@ public class MutableServiceProvider : IServiceProvider, IDisposable, IAsyncDispo
             _callSiteValidator = new CallSiteValidator();
         }
     }
+
+    /// <summary>
+    /// Gets the current instance of the <see cref="MutableServiceProvider"/>.
+    /// </summary>
+    public static MutableServiceProvider? Default { get; private set; }
 
     /// <summary>
     /// Adds new services to the mutable service provider under a name in which makes it easy to
