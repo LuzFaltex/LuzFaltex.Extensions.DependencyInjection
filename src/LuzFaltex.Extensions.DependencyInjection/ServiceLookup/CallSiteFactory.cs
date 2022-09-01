@@ -19,16 +19,20 @@ internal sealed class CallSiteFactory : IServiceProviderIsService
 {
     private bool DefaultCollectionChecked;
     private const int DefaultSlot = 0;
-    private readonly Dictionary<string, IServiceCollection> _serviceCollections = new Dictionary<string, IServiceCollection>();
+    private readonly Dictionary<string, IServiceCollection> _serviceCollections;
     // private readonly ServiceDescriptor[] _descriptors;
-    private readonly ConcurrentDictionary<ServiceCacheKey, ServiceCallSite> _callSiteCache = new ConcurrentDictionary<ServiceCacheKey, ServiceCallSite>();
-    private readonly Dictionary<Type, ServiceDescriptorCacheItem> _descriptorLookup = new Dictionary<Type, ServiceDescriptorCacheItem>();
-    private readonly ConcurrentDictionary<Type, object> _callSiteLocks = new ConcurrentDictionary<Type, object>();
+    private readonly ConcurrentDictionary<ServiceCacheKey, ServiceCallSite> _callSiteCache;
+    private readonly Dictionary<Type, ServiceDescriptorCacheItem> _descriptorLookup;
+    private readonly ConcurrentDictionary<Type, object> _callSiteLocks;
 
     private readonly StackGuard _stackGuard;
 
     public CallSiteFactory()
     {
+        _serviceCollections = new Dictionary<string, IServiceCollection>();
+        _callSiteCache = new ConcurrentDictionary<ServiceCacheKey, ServiceCallSite>();
+        _descriptorLookup = new Dictionary<Type, ServiceDescriptorCacheItem>();
+        _callSiteLocks = new ConcurrentDictionary<Type, object>();
         _stackGuard = new StackGuard();
     }
 
@@ -307,22 +311,19 @@ internal sealed class CallSiteFactory : IServiceProviderIsService
                 else
                 {
                     var slot = 0;
-                    foreach (var collection in _serviceCollections.Values)
+                    var serviceCount = _serviceCollections.CountServices();
+                    for (int i = serviceCount.Count - 1; i >= 0; i--)
                     {
-                        // We are going in reverse so the last service in descriptor list gets slot 0
-                        for (var i = collection.Count - 1; i >= 0; i--)
+                        var descriptor = serviceCount[i];
+                        var callSite = TryCreateExact(descriptor, itemType, callSiteChain, slot) ??
+                                       TryCreateOpenGeneric(descriptor, itemType, callSiteChain, slot, false);
+
+                        if (callSite != null)
                         {
-                            var descriptor = collection[i];
-                            var callSite = TryCreateExact(descriptor, itemType, callSiteChain, slot) ??
-                                           TryCreateOpenGeneric(descriptor, itemType, callSiteChain, slot, false);
+                            slot++;
 
-                            if (callSite != null)
-                            {
-                                slot++;
-
-                                cacheLocation = GetCommonCacheLocation(cacheLocation, callSite.Cache.Location);
-                                callSites.Add(callSite);
-                            }
+                            cacheLocation = GetCommonCacheLocation(cacheLocation, callSite.Cache.Location);
+                            callSites.Add(callSite);
                         }
                     }
 
